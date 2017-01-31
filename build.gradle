@@ -12,6 +12,6 @@ dependencies {
 }  
 
 jar {  
-	baseName = 'platin'    
-	version='0.1.0'
+	baseName = 'masterlock'    
+	version='01.30.2017'
 }
