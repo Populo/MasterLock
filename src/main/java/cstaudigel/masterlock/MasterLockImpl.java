@@ -3,7 +3,7 @@ package cstaudigel.masterlock;
 import java.util.Random;
 
 /**
- * Created by chris on 1/31/17.
+ * Created by chris staudigel on 1/31/17.
  */
 public class MasterLockImpl implements MasterLock {
 
@@ -41,10 +41,10 @@ public class MasterLockImpl implements MasterLock {
         // easier math, multiply amount by multiplier (1 or -1) to decide direction
         int multiplier = clockwise ? -1 : 1;
 
-        topNumber = topNumber + (amount*multiplier);
+        topNumber = getCurrentNumber() + (amount*multiplier);
 
-        if (topNumber > MAXNUMBER) topNumber = topNumber - (MAXNUMBER);
-        else if (topNumber < 0) topNumber = (MAXNUMBER) + topNumber;
+        if (getCurrentNumber() > MAXNUMBER) topNumber = getCurrentNumber() - (MAXNUMBER);
+        else if (getCurrentNumber() < 0) topNumber = (MAXNUMBER) + getCurrentNumber();
     }
 
     /**
@@ -57,22 +57,18 @@ public class MasterLockImpl implements MasterLock {
      */
     @Override
     public void unlock(int x, int y, int z) {
-        // reset number to 0
-        if (topNumber > ((MAXNUMBER+1)/2)) turn(true, MAXNUMBER+1 - topNumber);
-        else if (topNumber < ((MAXNUMBER+1)/2)) turn(false, topNumber);
-
-
         // first input
         // revolution 1
         turn(true, MAXNUMBER);
         // revolution 2
         turn(true, MAXNUMBER);
         // to first number
+        // first number == MAXNUMBER caused errors
         if (x != MAXNUMBER) turn(true, MAXNUMBER - x);
         else turn(true, -MAXNUMBER);
 
-        num1 = topNumber;
-        if (topNumber == this.x) num1b = true;
+        num1 = getCurrentNumber();
+        if (getCurrentNumber() == this.x) num1b = true;
 
         // second number
         // revolution
@@ -82,9 +78,9 @@ public class MasterLockImpl implements MasterLock {
         // to second number
         turn(false, y);
 
-        num2 = topNumber;
+        num2 = getCurrentNumber();
 
-        if (topNumber == this.y) num2b = true;
+        if (getCurrentNumber() == this.y) num2b = true;
 
         // third number
         // back to 0
@@ -92,9 +88,9 @@ public class MasterLockImpl implements MasterLock {
         // to 3rd number
         turn(true, -z);
 
-        num3 = topNumber;
+        num3 = getCurrentNumber();
 
-        if (topNumber == this.z) num3b = true;
+        if (getCurrentNumber() == this.z) num3b = true;
     }
 
     @Override
@@ -119,12 +115,10 @@ public class MasterLockImpl implements MasterLock {
      */
     @Override
     public void closeLock() {
-        if (!isLocked) {
+        if (!checkStatus()) {
             Random rand = new Random();
             topNumber = rand.nextInt(MAXNUMBER+1);
             isLocked = true;
-        } else {
-            return;
         }
     }
 

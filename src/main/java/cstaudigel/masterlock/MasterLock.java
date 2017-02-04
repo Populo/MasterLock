@@ -1,7 +1,7 @@
 package cstaudigel.masterlock;
 
 /**
- * Created by chris on 1/31/17.
+ * Created by chris staudigel on 1/31/17.
  */
 public interface MasterLock {
 
