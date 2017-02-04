@@ -10,9 +10,10 @@ public class MasterLockImpl implements MasterLock {
     private int topNumber;
     public static final int MAXNUMBER = 39;
     private int x, y, z;
+    private int num1, num2, num3;
     private boolean isLocked;
 
-    private boolean num1, num2, num3;
+    private boolean num1b, num2b, num3b;
 
     public MasterLockImpl(int x, int y, int z) {
         this.x = x;
@@ -23,9 +24,9 @@ public class MasterLockImpl implements MasterLock {
 
         this.isLocked = true;
 
-        this.num1 = false;
-        this.num2 = false;
-        this.num3 = false;
+        this.num1b = false;
+        this.num2b = false;
+        this.num3b = false;
     }
 
 
@@ -42,8 +43,8 @@ public class MasterLockImpl implements MasterLock {
 
         topNumber = topNumber + (amount*multiplier);
 
-        if (topNumber > MAXNUMBER) topNumber = topNumber - MAXNUMBER;
-        else if (topNumber < 0) topNumber = MAXNUMBER - topNumber;
+        if (topNumber > MAXNUMBER) topNumber = topNumber - (MAXNUMBER);
+        else if (topNumber < 0) topNumber = (MAXNUMBER) + topNumber;
     }
 
     /**
@@ -56,39 +57,49 @@ public class MasterLockImpl implements MasterLock {
      */
     @Override
     public void unlock(int x, int y, int z) {
+        // reset number to 0
+        if (topNumber > ((MAXNUMBER+1)/2)) turn(true, MAXNUMBER+1 - topNumber);
+        else if (topNumber < ((MAXNUMBER+1)/2)) turn(false, topNumber);
+
+
         // first input
         // revolution 1
         turn(true, MAXNUMBER);
         // revolution 2
         turn(true, MAXNUMBER);
         // to first number
-        turn(true, MAXNUMBER - x);
+        if (x != MAXNUMBER) turn(true, MAXNUMBER - x);
+        else turn(true, -MAXNUMBER);
 
-        if (topNumber == this.x) num1 = true;
+        num1 = topNumber;
+        if (topNumber == this.x) num1b = true;
 
         // second number
         // revolution
         turn(false, MAXNUMBER);
         // to 0
-        turn(false, x);
+        turn(false, -x);
         // to second number
-        turn(false, (MAXNUMBER+1) - y);
+        turn(false, y);
 
-        if (topNumber == this.y) num2 = true;
+        num2 = topNumber;
+
+        if (topNumber == this.y) num2b = true;
 
         // third number
         // back to 0
-        // TODO doesnt need to go to 0, what if third # is before 0
         turn(true, y);
         // to 3rd number
-        turn(true, z);
+        turn(true, -z);
 
-        if (topNumber == this.z) num3 = true;
+        num3 = topNumber;
+
+        if (topNumber == this.z) num3b = true;
     }
 
     @Override
     public boolean pullLock() {
-        return num1 && num2 && num3;
+        return num1b && num2b && num3b;
     }
 
     /**
@@ -108,9 +119,13 @@ public class MasterLockImpl implements MasterLock {
      */
     @Override
     public void closeLock() {
-        Random rand = new Random();
-        topNumber = rand.nextInt(MAXNUMBER+1);
-        isLocked = true;
+        if (!isLocked) {
+            Random rand = new Random();
+            topNumber = rand.nextInt(MAXNUMBER+1);
+            isLocked = true;
+        } else {
+            return;
+        }
     }
 
     /**
