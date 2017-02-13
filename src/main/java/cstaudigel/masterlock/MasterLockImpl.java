@@ -15,6 +15,9 @@ public class MasterLockImpl implements MasterLock {
 
     private boolean num1b, num2b, num3b;
 
+    /**
+     * constructor that sets combination
+     */
     public MasterLockImpl(int x, int y, int z) {
         this.x = x;
         this.y = y;
@@ -93,6 +96,11 @@ public class MasterLockImpl implements MasterLock {
         if (getCurrentNumber() == this.z) num3b = true;
     }
 
+    /**
+     * pullLock
+     * 
+     * returns true if and only if all 3 numbers were correct
+     */
     @Override
     public boolean pullLock() {
         return num1b && num2b && num3b;
@@ -111,7 +119,7 @@ public class MasterLockImpl implements MasterLock {
     }
 
     /**
-     * closes the lock
+     * closes the lock and resets top number
      */
     @Override
     public void closeLock() {
@@ -119,6 +127,14 @@ public class MasterLockImpl implements MasterLock {
             Random rand = new Random();
             topNumber = rand.nextInt(MAXNUMBER+1);
             isLocked = true;
+
+            num1 = 0;
+            num2 = 0;
+            num3 = 0;
+
+            num1b = false;
+            num2b = false;
+            num3b = false;
         }
     }
 
